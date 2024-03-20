@@ -34,8 +34,8 @@ public class Client {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        Client client = new Client("localhost", 50051); // Подключение к серверу на локальном хосте и порту 50051
-        client.requestSequence(0, 30); // Отправка запроса для получения последовательности чисел от 0 до 30
-        client.shutdown(); // Завершение работы клиента
+        Client client = new Client("localhost", 50051);
+        client.requestSequence(0, 30);
+        client.shutdown();
     }
 }
