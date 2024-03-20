@@ -1,5 +1,7 @@
 package org.example.client;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.example.BoundsMessage;
@@ -8,6 +10,8 @@ import org.example.RemoteSequenceServiceGrpc;
 import java.util.concurrent.TimeUnit;
 
 public class Client {
+    private static final Logger logger = LoggerFactory.getLogger(Client.class);
+
     private final ManagedChannel channel;
     private final RemoteSequenceServiceGrpc.RemoteSequenceServiceBlockingStub blockingStub;
 
@@ -29,6 +33,7 @@ public class Client {
                 .build();
         blockingStub.getSequence(request).forEachRemaining(valueMessage -> {
             int currentValue = 0;
+            logger.info("Received value: {}", valueMessage.getValue());
             System.out.println("currentValue:" + (currentValue += valueMessage.getValue() + 1));
         });
     }

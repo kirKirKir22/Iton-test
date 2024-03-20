@@ -9,7 +9,12 @@ import org.example.ValueMessage;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Server {
+    private static final Logger logger = LoggerFactory.getLogger(Server.class);
     private io.grpc.Server server;
 
     public void start() throws IOException {
@@ -18,13 +23,13 @@ public class Server {
                 .addService(new RemoteSequenceServiceImpl())
                 .build()
                 .start();
-        System.out.println("Server started, listening on " + port);
+        logger.info("Server started, listening on port {}", port);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.out.println("Shutting down gRPC server");
+            logger.info("Shutting down gRPC server");
             try {
                 server.shutdown().awaitTermination(30, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
-                e.printStackTrace(System.err);
+                logger.error("Error occurred while shutting down the server", e);
             }
         }));
     }
@@ -49,15 +54,16 @@ public class Server {
             int currentValue = firstValue;
             while (currentValue <= lastValue) {
                 responseObserver.onNext(ValueMessage.newBuilder().setValue(currentValue).build());
+                logger.debug("Sent value: {}", currentValue);
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.error("Error occurred while sleeping", e);
                 }
                 currentValue++;
             }
             responseObserver.onCompleted();
+            logger.info("Sequence generation completed");
         }
     }
 }
-
