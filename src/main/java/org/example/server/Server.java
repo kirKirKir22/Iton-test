@@ -9,14 +9,21 @@ import org.example.ValueMessage;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A gRPC server that generates a sequence of numbers based on client requests.
+ */
 public class Server {
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
     private io.grpc.Server server;
 
+    /**
+     * Starts the gRPC server on the specified port.
+     *
+     * @throws IOException if there is an error starting the server.
+     */
     public void start() throws IOException {
         int port = 50051;
         server = ServerBuilder.forPort(port)
@@ -34,18 +41,20 @@ public class Server {
         }));
     }
 
+    /**
+     * Blocks until the server is shut down.
+     *
+     * @throws InterruptedException if the current thread is interrupted while waiting.
+     */
     public void blockUntilShutdown() throws InterruptedException {
         if (server != null) {
             server.awaitTermination();
         }
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        Server server = new Server();
-        server.start();
-        server.blockUntilShutdown();
-    }
-
+    /**
+     * gRPC service implementation for generating a sequence of numbers.
+     */
     static class RemoteSequenceServiceImpl extends RemoteSequenceServiceGrpc.RemoteSequenceServiceImplBase {
         @Override
         public void getSequence(BoundsMessage request, StreamObserver<ValueMessage> responseObserver) {
@@ -65,5 +74,18 @@ public class Server {
             responseObserver.onCompleted();
             logger.info("Sequence generation completed");
         }
+    }
+
+    /**
+     * Entry point for starting the server.
+     *
+     * @param args command-line arguments (not used).
+     * @throws IOException          if there is an error starting the server.
+     * @throws InterruptedException if the current thread is interrupted while waiting.
+     */
+    public static void main(String[] args) throws IOException, InterruptedException {
+        Server server = new Server();
+        server.start();
+        server.blockUntilShutdown();
     }
 }
