@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package org.example;
+
+option java_multiple_files = true;
+
+message BoundsMessage {
+  int32 firstNumber = 1;
+  int32 lastNumber = 2;
+}
+
+message ValueMessage {
+  int32 value = 1;
+}
+
+service RemoteSequenceService {
+  rpc getSequence(BoundsMessage) returns (stream ValueMessage);
+}
