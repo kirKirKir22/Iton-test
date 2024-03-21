@@ -2,7 +2,7 @@
 
 ## Technology Stack
 
-- **Java**: 
+- **Java 11**: 
 - **gRPC**: 
 - **Gradle**: 
 - **SLF4J**: 
